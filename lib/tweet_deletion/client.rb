@@ -9,6 +9,20 @@ module TweetDeletion
       @client = client
     end
 
+    def log_group(txt) 
+      puts txt
+      yield
+      puts "\n\n"
+    end
+
+    def log_item(tag)
+      $stdout.write tag
+    end
+
+    def log_end_category
+      puts "\n\n"
+    end
+
     def tester
       @tester ||= Tester.new(self)
     end
@@ -18,45 +32,69 @@ module TweetDeletion
     end
 
     def for_favorites(&block)
-      tweets = @client.favorites(count: 100)
-      while tweets.any?
-        to_delete = tweets.dup.delete_if do |tweet|
-          tester.keep?(tweet, &block)
+      log_group("For favorites") do
+        tweets = @client.favorites(count: 100)
+        while tweets.any?
+          tweets.each do |tweet|
+            if tester.keep?(tweet, &block)
+              log_item(tester.tag)
+            else
+              log_item(tester.tag)
+              @client.unfavorite(tweet) 
+            end
+          end
+          tweets = @client.favorites(count: 100, max_id: tweets.last.id - 1)
         end
-        @client.unfavorite(*to_delete)
-        tweets = @client.favorites(count: 100, max_id: tweets.last)
       end
     end
 
     def for_ids(ids, &block)
-      ids.each_slice(99) do |slice|
-        tweets = @client.statuses(*slice)
-        to_delete = tweets.dup.delete_if do |tweet|
-          tester.keep?(tweet, &block)
+      log_group("For ids…") do
+        ids.each_slice(99) do |slice|
+          tweets = @client.statuses(*slice)
+          tweets.each do |tweet|
+            if tester.keep?(tweet, &block)
+              log_item(tester.tag)
+            else
+              log_item(tester.tag)
+              @client.destroy_status(tweet)
+            end
+          end
         end
-        @client.destroy_status(*to_delete)
       end
     end
 
-    def for_tweets(&block)
-      tweets = @client.user_timeline(count: 100, include_rts: false, exclude_replies: false)
-      while tweets.any?
-        to_delete = tweets.dup.delete_if do |tweet|
-          tester.keep?(tweet, &block)
+    def for_tweets(include_rts: false, &block)
+      log_group("For tweets…") do
+        tweets = @client.user_timeline(count: 100, include_rts: include_rts, exclude_replies: false)
+        while tweets.any? 
+          tweets.each do |tweet|
+            if tester.keep?(tweet, &block)
+              log_item(tester.tag)
+            else
+              log_item(tester.tag)
+              @client.destroy_status(tweet)
+            end
+          end
+          tweets = @client.user_timeline(count: 100, include_rts: false, exclude_replies: false, max_id: tweets.last.id - 1)
         end
-        @client.destroy_status(*to_delete)
-        tweets = @client.user_timeline(count: 100, include_rts: false, exclude_replies: false, max_id: tweets.last)
       end
     end
 
     def for_retweets(&block)
-      tweets = @client.retweeted_by_me(count: 100, exclude_replies: false)
-      while tweets.any?
-        to_delete = tweets.dup.delete_if do |tweet|
-          tester.keep?(tweet, &block)
+      log_group("For retweets…") do
+        tweets = @client.retweeted_by_me(count: 100, exclude_replies: false)
+        while tweets.any?
+          tweets.each do |tweet|
+            if tester.keep?(tweet, &block)
+              log_item(tester.tag)
+            else
+              log_item(tester.tag)
+              @client.destroy_status(tweet)
+            end
+          end
+          tweets = @client.retweeted_by_me(count: 100, exclude_replies: false, max_id: tweets.last.id - 1)
         end
-        @client.destroy_status(*to_delete)
-        tweets = @client.retweeted_by_me(count: 100, exclude_replies: false, max_id: tweets.last)
       end
     end
 

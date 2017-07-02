@@ -4,16 +4,22 @@ module TweetDeletion
 
   class Tester
 
+    DEFAULT_TAG = "•"
+
     attr_reader :tweet
+    attr_reader :tag
     
 
     def initialize(client)
       @keep = nil
       @client = client
+      @tag = DEFAULT_TAG
       @kept = [ ]
       @kept_replied = [ ]
       @kept_quoted = [ ]
       @deleted = [ ]
+      @deleted_replied = [ ]
+      @deleted_quoted = [ ]
     end
 
     def keep?(tweet, &block)
@@ -23,30 +29,30 @@ module TweetDeletion
       @keep
     end
 
-    def else_keep
-      keep!
+    def else_keep(tag:nil)
+      keep!(tag:tag) if @keep.nil? 
     end
 
-    def else_delete
-      delete!
+    def else_delete(tag:nil)
+      delete!(tag:tag) if @keep.nil? 
     end
-
-    def keep_if(arg, &block)
+    
+    def keep_if(arg, tag:nil, &block)
       if @keep.nil? 
         if block.nil?
-          keep! if arg
+          keep!(tag:tag) if arg
         else
-          keep! if self.instance_eval(&block)
+          keep!(tag:tag) if self.instance_eval(&block)
         end
       end
     end
 
-    def keep_unless(arg, &block)
+    def keep_unless(arg, tag:nil, &block)
       if @keep.nil? 
         if block.nil?
-          delete! if arg
+          delete!(tag:tag) if arg
         else
-          delete! if self.instance_eval(&block)
+          delete!(tag:tag) if self.instance_eval(&block)
         end
       end
     end
@@ -88,11 +94,11 @@ module TweetDeletion
     end
 
     def fav_by_more_than(nbr)
-      tweet_favorite_count >= nbr
+      tweet.favorite_count >= nbr
     end
 
     def is_rt()
-      not tweet.retweet?
+      tweet.retweet?
     end
 
     def rt_of(who)
@@ -110,14 +116,16 @@ module TweetDeletion
 
   private
 
-    def keep!
+    def keep!(tag:nil)
+      @tag = tag || "·"
       @keep = true
       @kept << tweet.id
       @kept_quoted << tweet.quoted_status.id
       @kept_replied << tweet.in_reply_to_status_id
     end
 
-    def delete!
+    def delete!(tag:nil)
+      @tag = tag || "x"
       @keep = false
       @deleted << tweet.id
       @deleted_quoted << tweet.quoted_status.id
