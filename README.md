@@ -23,7 +23,7 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-TwitterDeletion.with(
+TweetDeletion.with(
   consumer_key: "…",
   consumer_secret: "…",
   access_token: "…",
@@ -54,7 +54,7 @@ end
 Or with emojis as visual feedback:
 
 ```ruby
-TwitterDeletion.with(
+TweetDeletion.with(
   consumer_key: "…",
   consumer_secret: "…",
   access_token: "…",
