@@ -6,24 +6,17 @@ TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'tweet_deletion'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install tweet_deletion
+After checking out the repo, run `bin/setup` to install dependencies.
+To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## Usage
 
+Create a script that uses TweetDeletion. You will need a Twitter Development account and to create an application on the [App Deshboard](https://apps.twitter.com/).
+
 ```ruby
-TwitterDeletion.with(
+require "tweet_deletion"
+
+TweetDeletion.with(
   consumer_key: "…",
   consumer_secret: "…",
   access_token: "…",
@@ -54,7 +47,9 @@ end
 Or with emojis as visual feedback:
 
 ```ruby
-TwitterDeletion.with(
+require "tweet_deletion"
+
+TweetDeletion.with(
   consumer_key: "…",
   consumer_secret: "…",
   access_token: "…",
@@ -97,6 +92,11 @@ TwitterDeletion.with(
 end
 ```
 
+Then execute you script:
+
+```ruby
+ruby your_script.rb
+```
 
 
 ## Development
