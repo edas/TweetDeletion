@@ -53,11 +53,17 @@ module TweetDeletion
         ids.each_slice(99) do |slice|
           tweets = @client.statuses(*slice)
           tweets.each do |tweet|
-            if tester.keep?(tweet, &block)
-              log_item(tester.tag)
-            else
-              log_item(tester.tag)
-              @client.destroy_status(tweet)
+            begin
+              if tester.keep?(tweet, &block)
+                log_item(tester.tag)
+              else
+                log_item(tester.tag)
+                @client.destroy_status(tweet)
+              end
+            rescue Twitter::Error::NotFound
+              log_item(" ❓ ")
+            rescue Twitter::Error::Unauthorized
+              log_item(" 🕶️ ")
             end
           end
         end
@@ -99,8 +105,9 @@ module TweetDeletion
     end
 
     def for_archive(dir, &block)
+      filepath = File.join(dir, "data/js/tweet_index.js")
       js = File.read(File.join(dir, "data/js/tweet_index.js"))
-      index = JSON.load(js.sub(/^.*?\[\s\{/, "[ {"))
+      index = JSON.load(js.sub(/^.*?\s*\[\s*\{/, "[ {"))
       index.each do |part|
         file = File.join(dir, part["file_name"])
         for_archive_file(file, &block)
@@ -109,15 +116,12 @@ module TweetDeletion
 
     def for_archive_file(file, &block)
       js = File.read(file)
-      index = JSON.load(js.sub(/^.*?\[\s\{/, "[ {"))
-      index.each do |attrs|  
-        tweet = Twitter::Tweet.new(symbolize_keys(attrs))
-        begin
-          @client.destroy_status(tweet) if tester.keep?(tweet, &block)
-        rescue Twitter::Error::NotFound
-          # tweet already deleted, pass
-        end
+      index = JSON.load(js.sub(/^.*?\s*\[\s*\{/, "[ {"))
+      tweet_ids = Array.new
+      index.each do |attrs|
+        tweet_ids.push symbolize_keys!(attrs)[:id]
       end
+      puts for_ids(tweet_ids, &block)
     end
 
     def symbolize_keys!(object)
