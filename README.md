@@ -11,110 +11,20 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## Usage
 
-Create a script that uses TweetDeletion. You will need a Twitter Development account and to create an application on the [App Deshboard](https://apps.twitter.com/).
+Create a script that uses TweetDeletion (see exemple_script.rb). You will need a Twitter Development account and to create an application on the [App Deshboard](https://apps.twitter.com/). Then you can create a config.yml file at the root of the folder and replace the `~` with your values:
 
-```ruby
-require "tweet_deletion"
-
-TweetDeletion.with(
-  consumer_key: "…",
-  consumer_secret: "…",
-  access_token: "…",
-  access_token_secret: "…",
-) do 
-
-  for_favorites do
-    keep_if by(:me) 
-    keep_if earlier_than( 10.days.ago )
-    keep_if rt_by(:me)
-  end 
-
-  for_tweets do
-    keep_if earlier_than( 10.days.ago )
-    delete_if rt_of(:me) if is_rt
-    keep_if fav_by(:me)
-    keep_if has_kept_reply
-    keep_if has_kept_quote
-    unless is_rt
-      keep_if rt_by_more_than( 50 )
-      keep_if fav_by_more_than( 50 )
-    end
-  end
-
-end
-```
-
-Or with emojis as visual feedback:
-
-```ruby
-require "tweet_deletion"
-
-TweetDeletion.with(
-  consumer_key: "…",
-  consumer_secret: "…",
-  access_token: "…",
-  access_token_secret: "…",
-) do 
-
-  for_favorites do
-    keep_if by(:me), tag:" 🗣 "
-    keep_if earlier_than( 12.days.ago ), tag:" 📅 "
-    keep_if rt_by(:me), tag:" 💬 "
-    else_delete tag:" 🗑 "
-  end 
-
-  for_tweets(include_rts: true) do
-    keep_if earlier_than( 10.days.ago ), tag:" 📅 "
-    delete_if (is_rt and rt_of(:me)), tag:" 🗑 "
-    keep_if fav_by(:me), tag: " ❤ ️"
-    keep_if has_kept_reply, tag:" 💬 "
-    keep_if has_kept_quote, tag:" 💬 "
-    unless is_rt
-      keep_if rt_by_more_than( 15 ), tag: " 💯 "
-      keep_if fav_by_more_than( 15 ), tag: " 💯 "
-    end
-    else_delete tag:" 🗑 "
-  end
-
-  for_retweets do
-    keep_if earlier_than( 10.days.ago ), tag:" 📅 "
-    delete_if (is_rt and rt_of(:me)), tag:" 🗑 "
-    keep_if fav_by(:me), tag: " ❤ ️"
-    keep_if has_kept_reply, tag:" 💬 "
-    keep_if has_kept_quote, tag:" 💬 "
-    unless is_rt
-      keep_if rt_by_more_than( 15 ), tag: " 💯 "
-      keep_if fav_by_more_than( 15 ), tag: " 💯 "
-    end
-    else_delete tag:" 🗑 "
-  end
-
-end
+```yml
+--- 
+access_token: "~"
+access_token_secret: "~"
+consumer_key: "~"
+consumer_secret: "~"
 ```
 
 Then execute you script:
 
 ```ruby
 ruby your_script.rb
-```
-
-### Tweets from archive
-
-Download your Twitter Archive and unzip it to pass the folder's path to a specific set of rules into your script:
-
-```ruby
-for_archive("./archive/") do
-    keep_if earlier_than( 10.days.ago ), tag:" 📅 "
-    delete_if (is_rt and rt_of(:me)), tag:" 🗑 "
-    keep_if fav_by(:me), tag: " ❤ ️"
-    keep_if has_kept_reply, tag:" 💬 "
-    keep_if has_kept_quote, tag:" 💬 "
-    unless is_rt
-      keep_if rt_by_more_than( 15 ), tag: " 💯 "
-      keep_if fav_by_more_than( 15 ), tag: " 💯 "
-    end
-    else_delete tag:" 🗑 "
-end
 ```
 
 

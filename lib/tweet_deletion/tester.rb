@@ -73,6 +73,10 @@ module TweetDeletion
       not earlier_than(date)
     end
 
+    def tweet_contains( keystring )
+      tweet.text.include? keystring
+    end
+
     def rt_by(who)
       if who == :me
         tweet.retweeted?
