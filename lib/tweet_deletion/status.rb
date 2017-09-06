@@ -152,9 +152,11 @@ class Status
     visibility == :private
   end
 
-  def direct
+  def direct?
     visibility == :direct
   end
+  alternative_name :direct_message?, :direct?
+  alternative_name :dm?, :direct? 
 
   def links
     raise
