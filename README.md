@@ -1,8 +1,10 @@
 # TweetDeletion
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/tweet_deletion`. To experiment with that code, run `bin/console` for an interactive prompt.
+This code allows you to delete your tweets both and Twitter and Mastodon depending on various criterias. 
 
-TODO: Delete this and the text above, and describe your gem
+I use it to delete most tweets after 10 days, with additionnal complexe rules (keep tweets I favorited, keep private messages, keep tweet with high interactions, …)
+
+Contributions are more than welcomed. Feel free to use and adapt. Ask questions if you have any. Please do contact me to let me know how your are using it.
 
 ## Installation
 
