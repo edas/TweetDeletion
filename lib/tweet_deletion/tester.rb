@@ -61,8 +61,12 @@ module TweetDeletion
     alias :delete_unless :keep_if
 
     def by(who)
-      who = @client.screen_name if who == :me
-      tweet.user.screen_name == who
+      who = @client.me if who == :me
+      if who.kind_of? Numeric
+        who == tweet.user_id
+      else
+        who == tweet.user_name
+      end
     end
 
     def earlier_than( date )
@@ -90,20 +94,39 @@ module TweetDeletion
     end
 
     def rt_by_more_than(nbr)
-      tweet.retweet_count >= nbr
+      tweet.rt_count >= nbr
     end
 
     def fav_by_more_than(nbr)
-      tweet.favorite_count >= nbr
+      tweet.fav_count >= nbr
     end
 
     def is_rt()
-      tweet.retweet?
+      tweet.rt?
+    end
+
+    def links_to(match)
+      match = Regexp("^#{Regexp.quote(match)}$") if match.kind_of? String
+      tweet.links.find { |link| link.match(match) }
+    end
+
+    def contains(match)
+      match = Regexp.quote(match) if match.kind_of? String
+      tweet.text.match(match)
     end
 
     def rt_of(who)
-      who = @client.screen_name if who == :me
-      tweet.retweet? and tweet.retweeted_status&.user&.screen_name == who
+      if is_rt
+        rt = tweet.retweeted_status
+        who = @client.me if who == :me
+        if who.kind_of? Numeric
+          who == rt.user_id
+        else
+          who == rt.user_name
+        end
+      else
+        false
+      end
     end
 
     def has_kept_reply
@@ -114,22 +137,64 @@ module TweetDeletion
       @kept_quoted.include? tweet.id
     end
 
+    def on_mastodon
+      @client.network == :mastodon
+    end
+
+    def on_twitter
+      @client.network == :twitter
+    end
+
+    def me
+      @client.account_name
+    end
+
+    def is_public
+      tweet.public?
+    end
+
+    def is_private
+      tweet.private?
+    end
+
+    def is_unlisted
+      tweet.unlisted?
+    end
+
+    def is_direct_message
+      tweet.direct?
+    end
+    alias_method :is_dm, :is_direct_message
+
+
+    def twitter
+      twitter? && @client
+    end
+
+    def mastodon
+      mastodon? && @client
+    end
+
+    def has_media
+      tweet.has_media?
+    end
+
   private
 
     def keep!(tag:nil)
       @tag = tag || "·"
       @keep = true
       @kept << tweet.id
-      @kept_quoted << tweet.quoted_status.id
-      @kept_replied << tweet.in_reply_to_status_id
+      @kept_quoted << tweet.quoted_id if tweet.quote?
+      @kept_replied << tweet.in_reply_to if tweet.reply?
     end
 
     def delete!(tag:nil)
       @tag = tag || "x"
       @keep = false
       @deleted << tweet.id
-      @deleted_quoted << tweet.quoted_status.id
-      @deleted_replied << tweet.in_reply_to_status_id
+      @deleted_quoted << tweet.quoted_id if tweet.quote?
+      @deleted_replied << tweet.in_reply_to if tweet.reply?
     end
 
   end 

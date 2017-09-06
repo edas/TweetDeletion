@@ -1,20 +1,51 @@
 require "tweet_deletion/version"
-require "twitter"
 require "tweet_deletion/client"
+require "tweet_deletion/twitter"
+require "tweet_deletion/mastodon"
+require "tweet_deletion/status"
+require "tweet_deletion/tweet"
+require "tweet_deletion/toot"
 require "tweet_deletion/tester"
-
+require "twitter"
 module TweetDeletion
   
-  def self.with(*args, consumer_secret:, consumer_key:, access_token:, access_token_secret:, &block)
-    client = Client.new( 
-      Twitter::REST::Client.new do |config|
-        config.consumer_key        = consumer_key 
-        config.consumer_secret     = consumer_secret
-        config.access_token        = access_token
-        config.access_token_secret = access_token_secret
+  def self.with(arg, &block)
+    symbolize_keys!(arg)
+    if arg.respond_to?(:has_key?) and arg.has_key?(:access_token_secret)
+      # old API, one account only, twitter only
+      arg = [ arg ]
+    elsif arg.kind_of? Hash
+      arg = arg.values
+    end
+    for account in arg
+      next if account[:deactivated]
+      client = case account[:network]&.to_s&.downcase
+      when "twitter" then Twitter
+      when "mastodon" then Mastodon
+      else 
+        account.has_key?(:access_token_secret) ? Twitter : Mastodon
       end
-    )
-    client.instance_exec(*args, &block)
+      begin
+        client.new(account).instance_exec([], &block)
+      rescue ::Twitter::Error::Forbidden
+        puts "!!! FORBIDDEN \n\n" 
+      rescue ::Twitter::Error::Unauthorized
+        puts "!!! UNAUTHORIZED \n\n"
+      end
+    end
+  end
+
+  def self.symbolize_keys!(object)
+    if object.is_a?(Array)
+      object.each_with_index do |val, index|
+        object[index] = symbolize_keys!(val)
+      end
+    elsif object.is_a?(Hash)
+      object.keys.each do |key|
+        object[key.to_sym] = symbolize_keys!(object.delete(key))
+      end
+    end
+    object
   end
 
 end
