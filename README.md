@@ -42,12 +42,13 @@ TweetDeletion.with( accounts ) do
     keep_if rt_by(:me)
   end 
 
-  for_tweets do
+  for_tweets(include_rts: true) do
     keep_if earlier_than( 10.days.ago )
     delete_if rt_of(:me) if is_rt
     keep_if fav_by(:me)
     keep_if has_kept_reply
     keep_if has_kept_quote
+    keep_if is_direct_message
     unless is_rt
       keep_if rt_by_more_than( 50 )
       keep_if fav_by_more_than( 50 )
@@ -96,19 +97,7 @@ TweetDeletion.with(
     keep_if fav_by(:me), tag: " ❤ ️"
     keep_if has_kept_reply, tag:" 💬 "
     keep_if has_kept_quote, tag:" 💬 "
-    unless is_rt
-      keep_if rt_by_more_than( 15 ), tag: " 💯 "
-      keep_if fav_by_more_than( 15 ), tag: " 💯 "
-    end
-    else_delete tag:" 🗑 "
-  end
-
-  for_retweets do
-    keep_if earlier_than( 10.days.ago ), tag:" 📅 "
-    delete_if (is_rt and rt_of(:me)), tag:" 🗑 "
-    keep_if fav_by(:me), tag: " ❤ ️"
-    keep_if has_kept_reply, tag:" 💬 "
-    keep_if has_kept_quote, tag:" 💬 "
+    keep_if is_direct_message, tag: " 📩 "
     unless is_rt
       keep_if rt_by_more_than( 15 ), tag: " 💯 "
       keep_if fav_by_more_than( 15 ), tag: " 💯 "
