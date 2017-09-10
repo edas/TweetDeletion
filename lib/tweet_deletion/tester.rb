@@ -8,51 +8,51 @@ module TweetDeletion
 
     attr_reader :tweet
     attr_reader :tag
-    
+
 
     def initialize(client)
       @keep = nil
       @client = client
       @tag = DEFAULT_TAG
-      @kept = [ ]
-      @kept_replied = [ ]
-      @kept_quoted = [ ]
-      @deleted = [ ]
-      @deleted_replied = [ ]
-      @deleted_quoted = [ ]
+      @kept = []
+      @kept_replied = []
+      @kept_quoted = []
+      @deleted = []
+      @deleted_replied = []
+      @deleted_quoted = []
     end
 
     def keep?(tweet, &block)
       @tweet = tweet
       @keep = nil
-      self.instance_eval(&block)
+        self.instance_eval(&block)
       @keep
     end
 
-    def else_keep(tag:nil)
-      keep!(tag:tag) if @keep.nil? 
+    def else_keep(tag: nil)
+      keep!(tag: tag) if @keep.nil?
     end
 
-    def else_delete(tag:nil)
-      delete!(tag:tag) if @keep.nil? 
+    def else_delete(tag: nil)
+      delete!(tag: tag) if @keep.nil?
     end
-    
-    def keep_if(arg, tag:nil, &block)
-      if @keep.nil? 
+
+    def keep_if(arg, tag: nil, &block)
+      if @keep.nil?
         if block.nil?
-          keep!(tag:tag) if arg
+          keep!(tag: tag) if arg
         else
-          keep!(tag:tag) if self.instance_eval(&block)
+          keep!(tag: tag) if self.instance_eval(&block)
         end
       end
     end
 
-    def keep_unless(arg, tag:nil, &block)
-      if @keep.nil? 
+    def keep_unless(arg, tag: nil, &block)
+      if @keep.nil?
         if block.nil?
-          delete!(tag:tag) if arg
+          delete!(tag: tag) if arg
         else
-          delete!(tag:tag) if self.instance_eval(&block)
+          delete!(tag: tag) if self.instance_eval(&block)
         end
       end
     end
@@ -65,18 +65,21 @@ module TweetDeletion
       tweet.user.screen_name == who
     end
 
-    def earlier_than( date )
+    def earlier_than(date)
       tweet.created_at > date
     end
 
-    def older_than( date )
+    def older_than(date)
       not earlier_than(date)
     end
 
-    def tweet_contains( keystring )
+<<<<<<< HEAD
+    def tweet_contains(keystring)
       tweet.text.include? keystring
     end
 
+=======
+>>>>>>> parent of 31caec2... Simplify configuration + tweet_contains helper
     def rt_by(who)
       if who == :me
         tweet.retweeted?
@@ -84,7 +87,7 @@ module TweetDeletion
         raise
       end
     end
-    
+
     def fav_by(who)
       if who == :me
         tweet.favorited?
@@ -118,9 +121,9 @@ module TweetDeletion
       @kept_quoted.include? tweet.id
     end
 
-  private
+    private
 
-    def keep!(tag:nil)
+    def keep!(tag: nil)
       @tag = tag || "·"
       @keep = true
       @kept << tweet.id
@@ -128,7 +131,7 @@ module TweetDeletion
       @kept_replied << tweet.in_reply_to_status_id
     end
 
-    def delete!(tag:nil)
+    def delete!(tag: nil)
       @tag = tag || "x"
       @keep = false
       @deleted << tweet.id
@@ -136,6 +139,6 @@ module TweetDeletion
       @deleted_replied << tweet.in_reply_to_status_id
     end
 
-  end 
+  end
 
 end

@@ -1,15 +1,16 @@
 require "twitter"
 require "json"
+require "colorize"
 
 module TweetDeletion
 
   class Client
-    
+
     def initialize(client)
       @client = client
     end
 
-    def log_group(txt) 
+    def log_group(txt)
       puts txt
       yield
       puts "\n\n"
@@ -31,7 +32,7 @@ module TweetDeletion
       @screen_name ||= @client.user.screen_name
     end
 
-    def for_favorites(&block)
+    def for_favorites(dry: false, &block)
       log_group("For favorites") do
         tweets = @client.favorites(count: 100)
         while tweets.any?
@@ -39,14 +40,20 @@ module TweetDeletion
             if tester.keep?(tweet, &block)
               log_item(tester.tag)
             else
-              log_item(tester.tag)
-              @client.unfavorite(tweet) 
+              if dry == false
+                log_item(tester.tag)
+                @client.unfavorite(tweet)
+              else
+                log_item(tester.tag)
+                log_dry(tweet.text)
+              end
             end
           end
           tweets = @client.favorites(count: 100, max_id: tweets.last.id - 1)
         end
       end
     end
+
 
     def for_ids(ids, &block)
       log_group("For ids…") do
@@ -57,8 +64,13 @@ module TweetDeletion
               if tester.keep?(tweet, &block)
                 log_item(tester.tag)
               else
-                log_item(tester.tag)
-                @client.destroy_status(tweet)
+                if dry == false
+                  log_item(tester.tag)
+                  @client.destroy_status(tweet)
+                else
+                  log_item(tester.tag)
+                  log_dry(tweet.text)
+                end
               end
             rescue Twitter::Error::NotFound
               log_item(" ❓ ")
@@ -70,24 +82,30 @@ module TweetDeletion
       end
     end
 
-    def for_tweets(include_rts: false, &block)
+    def for_tweets(include_rts: false, dry: false, &block)
       log_group("For tweets…") do
         tweets = @client.user_timeline(count: 100, include_rts: include_rts, exclude_replies: false)
-        while tweets.any? 
+        while tweets.any?
           tweets.each do |tweet|
             if tester.keep?(tweet, &block)
               log_item(tester.tag)
             else
+              if dry == false
               log_item(tester.tag)
               @client.destroy_status(tweet)
+              else
+                log_dry ("\nREMOVE ::")
+                log_dry (tweet.text)
+              end
             end
           end
-          tweets = @client.user_timeline(count: 100, include_rts: false, exclude_replies: false, max_id: tweets.last.id - 1)
         end
       end
+      tweets = @client.user_timeline(count: 100, include_rts: false, exclude_replies: false, max_id: tweets.last.id - 1)
     end
 
-    def for_retweets(&block)
+
+    def for_retweets(dry: false, &block)
       log_group("For retweets…") do
         tweets = @client.retweeted_by_me(count: 100, exclude_replies: false)
         while tweets.any?
@@ -95,8 +113,13 @@ module TweetDeletion
             if tester.keep?(tweet, &block)
               log_item(tester.tag)
             else
-              log_item(tester.tag)
-              @client.destroy_status(tweet)
+              if dry == false
+                log_item(tester.tag)
+                @client.destroy_status(tweet)
+              else
+                log_item(tester.tag)
+                log_dry(tweet.text)
+              end
             end
           end
           tweets = @client.retweeted_by_me(count: 100, exclude_replies: false, max_id: tweets.last.id - 1)
@@ -137,6 +160,35 @@ module TweetDeletion
       object
     end
 
-  end
 
+
+    def for_only_tweets(dry: false, include_rts: false, &block)
+      log_group("For only tweets…") do
+        tweets = @client.user_timeline(count: 100, include_rts: include_rts, exclude_replies: false)
+        while tweets.any?
+          tweets.each do |tweet|
+            if tester.keep?(tweet, &block)
+              if dry == false
+                log_item(tester.tag)
+                @client.destroy_status(tweet)
+              else
+                puts "Remove".red
+                puts tweet.text.red
+              end
+            else
+              puts tweet.text.green
+            end
+          end
+          tweets = @client.user_timeline(count: 100, include_rts: false, exclude_replies: false, max_id: tweets.last.id - 1)
+        end
+      end
+    end
+
+
+
+
+
+
+  end
 end
+

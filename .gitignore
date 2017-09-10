@@ -7,9 +7,13 @@
 /pkg/
 /spec/reports/
 /tmp/
+.idea/
 
 # rspec failure tracking
 .rspec_status
 
 /archive/
+<<<<<<< HEAD
 config.yml
+=======
+>>>>>>> parent of 31caec2... Simplify configuration + tweet_contains helper
