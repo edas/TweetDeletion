@@ -9,16 +9,17 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## Usage
 
-<<<<<<< HEAD
 Create a script that uses TweetDeletion (see exemple_script.rb). You will need a Twitter Development account and to create an application on the [App Deshboard](https://apps.twitter.com/). Then you can create a config.yml file at the root of the folder and replace the `~` with your values:
 
-```yml
+```
+yml
 ---
 access_token: "~"
 access_token_secret: "~"
 consumer_key: "~"
 consumer_secret: "~"
-=======
+```
+
 Create a script that uses TweetDeletion. You will need a Twitter Development account and to create an application on the [App Deshboard](https://apps.twitter.com/).
 
 ```ruby
@@ -98,7 +99,6 @@ TweetDeletion.with(
   end
 
 end
->>>>>>> parent of 31caec2... Simplify configuration + tweet_contains helper
 ```
 
 Then execute you script:
@@ -107,8 +107,7 @@ Then execute you script:
 ruby your_script.rb
 ```
 
-<<<<<<< HEAD
-=======
+
 ### Tweets from archive
 
 Download your Twitter Archive and unzip it to pass the folder's path to a specific set of rules into your script:
@@ -129,7 +128,6 @@ end
 ```
 
 
->>>>>>> parent of 31caec2... Simplify configuration + tweet_contains helper
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
