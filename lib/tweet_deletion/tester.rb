@@ -73,13 +73,10 @@ module TweetDeletion
       not earlier_than(date)
     end
 
-<<<<<<< HEAD
     def tweet_contains(keystring)
       tweet.text.include? keystring
     end
 
-=======
->>>>>>> parent of 31caec2... Simplify configuration + tweet_contains helper
     def rt_by(who)
       if who == :me
         tweet.retweeted?
