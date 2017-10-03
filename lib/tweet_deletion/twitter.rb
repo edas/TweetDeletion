@@ -95,21 +95,21 @@ module TweetDeletion
       100
     end
 
-    def for_archive(dir, &block)
+    def for_archive(dir, dry: false, &block)
       filepath = File.join(dir, "data/js/tweet_index.js")
       js = File.read(filepath)
       index = JSON.load(js.sub(/^.*?\s*\[\s*\{/, "[ {"))
       index.each do |part|
         file = File.join(dir, part["file_name"])
-        for_archive_file(file, &block)
+        for_archive_file(file, dry: dry, &block)
       end
     end
 
-    def for_archive_file(file, &block)
+    def for_archive_file(file, dry: false, &block)
       js = File.read(file)
       index = JSON.load(js.sub(/^.*?\s*\[\s*\{/, "[ {"))
       tweet_ids = index.map { |attrs| attrs["id"] }
-      for_ids(tweet_ids, &block)
+      for_ids(tweet_ids, dry: dry, &block)
     end
 
     def self.authorize_request(consumer_key:, consumer_secret:)
