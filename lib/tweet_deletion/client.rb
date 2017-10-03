@@ -1,6 +1,5 @@
 require "twitter"
 require "json"
-require "colorize"
 
 module TweetDeletion
 
@@ -163,35 +162,6 @@ module TweetDeletion
       end
       object
     end
-
-
-
-    def for_only_tweets(dry: false, include_rts: false, &block)
-      log_group("For only tweets…") do
-        tweets = @client.user_timeline(count: 100, include_rts: include_rts, exclude_replies: false)
-        while tweets.any?
-          tweets.each do |tweet|
-            if tester.keep?(tweet, &block)
-              if dry == false
-                log_item(tester.tag)
-                @client.destroy_status(tweet)
-              else
-                puts "Remove".red
-                puts tweet.text.red
-              end
-            else
-              puts tweet.text.green
-            end
-          end
-          tweets = @client.user_timeline(count: 100, include_rts: false, exclude_replies: false, max_id: tweets.last.id - 1)
-        end
-      end
-    end
-
-
-
-
-
 
   end
 end
