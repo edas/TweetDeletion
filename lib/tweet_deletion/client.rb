@@ -24,6 +24,10 @@ module TweetDeletion
       puts "\n\n"
     end
 
+    def log_dry(text)
+      $stdout.write ": text\n"
+    end
+
     def tester
       @tester ||= Tester.new(self)
     end
