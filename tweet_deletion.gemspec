@@ -30,7 +30,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.add_dependency "twitter"
   spec.add_dependency "activesupport"
-  spec.add_dependency "colorize"
+  spec.add_dependency "mastodon-api"
+  spec.add_dependency "oauth2"
+  spec.add_dependency "loofah"
+  spec.add_dependency "twitter_oauth"
 
   spec.add_development_dependency "bundler", "~> 1.14"
   spec.add_development_dependency "rake", "~> 10.0"
