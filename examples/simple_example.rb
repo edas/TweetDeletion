@@ -9,7 +9,7 @@ TweetDeletion.with(
     access_token_secret: config["access_token_secret"],
 ) do
 
-  for_only_tweets(dry: true) do
+  for_tweets(include_rts: false, dry: true) do
     keep_if tweet_contains("New Followers"), tag: " 🔖 "
     keep_if tweet_contains("Mention reach"), tag: " 🔖 "
     keep_if rt_by_more_than(10)

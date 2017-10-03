@@ -10,7 +10,6 @@ TweetDeletion.with(
 ) do
 
   for_favorites do
-    # keep_if rt_by("DareBoost"), tag:" 🚀 "
 
     keep_if tweet_contains("[Veille]"), tag:" 🔖 "
     keep_if tweet_contains("DareBoost"), tag:" 🚀 "
@@ -22,7 +21,6 @@ TweetDeletion.with(
   end
 
   for_tweets(include_rts: true) do
-    # keep_if rt_by("DareBoost"), tag:" 🚀 "
 
     keep_if tweet_contains("[Veille]"), tag:" 🔖 "
     keep_if tweet_contains("DareBoost"), tag:" 🚀 "
@@ -40,7 +38,6 @@ TweetDeletion.with(
   end
 
   for_retweets do
-    # keep_if rt_by("DareBoost"), tag:" 🚀 "
 
     keep_if tweet_contains("[Veille]"), tag:" 🔖 "
     keep_if tweet_contains("DareBoost"), tag:" 🚀 "
@@ -58,7 +55,6 @@ TweetDeletion.with(
   end
 
   for_archive("./archive/") do
-    # keep_if rt_by("DareBoost"), tag:" 🚀 "
 
     keep_if tweet_contains("[Veille]"), tag:" 🔖 "
     keep_if tweet_contains("DareBoost"), tag:" 🚀 "
