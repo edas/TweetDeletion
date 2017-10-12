@@ -36,6 +36,7 @@ accounts = [
   },
   {
     network: "mastodon",
+    instance: "your instance url", 
     bearer_token: "xxx"  
   }
 ]
@@ -79,6 +80,7 @@ accounts = [
   },
   {
     network: "mastodon",
+    instance: "your instance url",
     bearer_token: "xxx"  
   }
 ]

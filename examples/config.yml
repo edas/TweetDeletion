@@ -1,0 +1,20 @@
+account_twitter_A: 
+  access_token: "your access token" 
+  access_token_secret: "your access token secret" 
+  consumer_key: "your consumer key" 
+  consumer_secret: "your consumer secret" 
+  network: twitter 
+account_twitter_B: 
+  access_token: "your access token" 
+  access_token_secret: "your access token secret" 
+  consumer_key: "your consumer key" 
+  consumer_secret: "your consumer secret" 
+  network: twitter 
+account_mastodon_A: 
+  bearer_token: "your bearer token" 
+  instance: "your instance url" 
+  network: mastodon 
+account_mastodon_B: 
+  bearer_token: "your bearer token" 
+  instance: "your instance url" 
+  network: mastodon 
