@@ -1,6 +1,6 @@
 require "tweet_deletion"
 require 'yaml'
-config = YAML.load_file('./config.yml')
+accounts = YAML.load_file('config.yml')
 
 TweetDeletion.with( accounts ) do
 
