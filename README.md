@@ -184,17 +184,6 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
-## My Contribution
-
-Add a mode who delete only the tweets who match conditions with a dry mode 
-
-````  
-for_only_tweets(dry: true) do
-  keep_if tweet_contains("text related"), tag: " 🔖 "
-  keep_if rt_by_more_than(10)
-end
-````
-
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at [TweetDeletion](https://github.com/edas/TweetDeletion).
