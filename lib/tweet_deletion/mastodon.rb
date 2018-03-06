@@ -89,7 +89,7 @@ module TweetDeletion
           toot = yieldable_status(tweet)
           yield toot if include_rts || !toot.rt?
         end
-        options[:max_id] = tweets.last.id - 1
+        options[:max_id] = Integer(tweets.last.id) - 1
         tweets = @client.statuses(account_id, options)
       end
     end
