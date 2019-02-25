@@ -28,13 +28,13 @@ module TweetDeletion
     end
 
     def with_user_favorites
-      tweets = @client.favorites(count: default_slice)
+      tweets = @client.favorites(count: default_slice, tweet_mode: 'extended')
       while tweets.any?
         last_id = tweets.last.id
         tweets.each do |tweet|
           yield yieldable_status(tweet)
         end
-        tweets = @client.favorites(count: default_slice, max_id: last_id - 1)
+        tweets = @client.favorites(count: default_slice, tweet_mode: 'extended', max_id: last_id - 1)
       end
     end
 
@@ -44,7 +44,7 @@ module TweetDeletion
 
     def with_statuses_by_id(ids)
       ids.each_slice(default_slice) do |slice|
-        tweets = @client.statuses(*slice)
+        tweets = @client.statuses(*slice, tweet_mode: 'extended')
         tweets.each do |tweet|
           yield yieldable_status(tweet)
         end
@@ -56,22 +56,22 @@ module TweetDeletion
     end
 
     def with_user_statuses(include_rts: true, exclude_replies: false)
-      tweets = @client.user_timeline(count: default_slice, include_rts: include_rts, exclude_replies: exclude_replies)
+      tweets = @client.user_timeline(count: default_slice, include_rts: include_rts, exclude_replies: exclude_replies, tweet_mode: 'extended')
       while tweets.any? 
         tweets.each do |tweet|
           yield yieldable_status(tweet)
         end
-        tweets = @client.user_timeline(count: default_slice, include_rts: include_rts, exclude_replies: exclude_replies, max_id: tweets.last.id - 1)
+        tweets = @client.user_timeline(count: default_slice, include_rts: include_rts, exclude_replies: exclude_replies, max_id: tweets.last.id - 1, tweet_mode: 'extended')
       end
     end
 
     def with_user_retweets
-      tweets = @client.retweeted_by_me(count: 100, exclude_replies: false)
+      tweets = @client.retweeted_by_me(count: 100, exclude_replies: false, tweet_mode: 'extended')
       while tweets.any?
         tweets.each do |tweet|
           yield yieldable_status(tweet)
         end
-        tweets = @client.retweeted_by_me(count: 100, exclude_replies: false, max_id: tweets.last.id - 1)
+        tweets = @client.retweeted_by_me(count: 100, exclude_replies: false, max_id: tweets.last.id - 1, tweet_mode: 'extended')
       end
     end
 
