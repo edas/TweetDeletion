@@ -62,7 +62,7 @@ module TweetDeletion
 
     def by(who)
       who = @client.me if who == :me
-      if who.kind_of? Numeric
+      if who.to_s == who.to_i.to_s
         who == tweet.user_id
       else
         who == tweet.user_name
