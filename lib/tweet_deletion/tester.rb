@@ -106,7 +106,7 @@ module TweetDeletion
     end
 
     def links_to(match)
-      match = Regexp("^#{Regexp.quote(match)}$") if match.kind_of? String
+      match = Regexp.new("^#{Regexp.quote(match)}$") if match.kind_of? String
       tweet.links.find { |link| link.match(match) }
     end
 
