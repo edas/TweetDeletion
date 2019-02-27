@@ -19,7 +19,7 @@ class Toot < Status
 
   def user_name
     acct = @status.account.acct
-    acct.match("@") ? acct : "acct@#{@instance}"
+    acct.match("@") ? acct : "#{acct}@#{@instance}"
   end
 
   def retweeted_status

@@ -62,7 +62,7 @@ module TweetDeletion
 
     def by(who)
       who = @client.me if who == :me
-      if who.kind_of? Numeric
+      if who.to_s == who.to_i.to_s
         who == tweet.user_id
       else
         who == tweet.user_name
@@ -106,7 +106,7 @@ module TweetDeletion
     end
 
     def links_to(match)
-      match = Regexp("^#{Regexp.quote(match)}$") if match.kind_of? String
+      match = Regexp.new("^#{Regexp.quote(match)}$") if match.kind_of? String
       tweet.links.find { |link| link.match(match) }
     end
 

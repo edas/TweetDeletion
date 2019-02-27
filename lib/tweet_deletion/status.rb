@@ -5,7 +5,7 @@ class Status
 
   def initialize(status, instance:nil, me:nil)
     @status = status
-    @instande = instance
+    @instance = instance
     @me = me
   end
 
