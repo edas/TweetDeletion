@@ -53,7 +53,7 @@ class Tweet < Status
   end
 
   def text_content
-    @status.full_text
+    @status.attrs[:full_text]
   end
 
   def html_content
