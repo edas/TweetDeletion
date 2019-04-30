@@ -52,7 +52,18 @@ module TweetDeletion
     end
 
     def destroy_status(tweet)
-      @client.destroy_status(tweet)
+      begin
+        @client.destroy_status(tweet)
+      rescue ::Twitter::Error::NotFound
+        # Tweet ID is still in timeline
+        # but cannot be deleted because
+        # it is marked as already deleted
+        # It may happen for RT of deleted tweets
+        # or RT of blocked accounts
+        # example : https://twitter.com/inclusicomps/status/843228546176864256
+        # and RT as : https://twitter.com/edas/status/843374966141829120
+        # Let's ignore it as we can't do anything with it anyways
+      end
     end
 
     def with_user_statuses(include_rts: true, exclude_replies: false)
